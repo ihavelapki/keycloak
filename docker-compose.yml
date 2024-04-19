@@ -2,30 +2,27 @@ version: '3'
 
 services:
   postgres:
-    image: postgres:15
+    image: postgres:15.3
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Orion123
-      POSTGRES_DB: keycloak_db
-    volumes:
-      - ./.pgdata:/var/lib/postgresql/data
+      POSTGRES_PASSWORD: Lolkek123
+      POSTGRES_DB: postgres
 
   keycloak3:
-    image: jboss/keycloak:latest
+    image: testkk01:latest
     environment:
-      DB_VENDOR: POSTGRES
-      DB_ADDR: postgres
-      DB_DATABASE: keycloak_db
-      DB_USER: postgres
-      DB_PASSWORD: Orion123
-      KEYCLOAK_USER: admin
+      KC_DB: postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: Lolkek123
+      KC_HOSTNAME: keycloak3
+      KC_DB_URL: jdbc:postgresql://postgres:5432/postgres
+      KEYCLOAK_ADMIN: rtlkcadm
+      KEYCLOAK_ADMIN_PASSWORD: Lolkek123
       KEYCLOAK_LOGLEVEL: DEBUG
-    ports:      
+      KC_HTTP_ENABLED: true
+    ports:
       - "8484:8080"
-    volumes:
-      - ./themes/rtl:/opt/jboss/keycloak/themes/rtl
-      - ./img.png:/opt/jboss/keycloak/themes/keycloak/login/resources/img/keycloak-bg.png
     depends_on:
       - postgres
