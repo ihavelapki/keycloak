@@ -22,6 +22,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: Lolkek123
       KEYCLOAK_LOGLEVEL: DEBUG
       KC_HTTP_ENABLED: true
+    command: start-dev
     ports:
       - "8484:8080"
     depends_on:

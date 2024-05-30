@@ -1,5 +1,7 @@
 FROM alpine:3.16
 
+MAINTAINER ihavelapki
+
 ENV TZ=Europe/Moscow
 
 RUN apk update && apk upgrade && apk add --no-cache curl openjdk17 bash
@@ -14,8 +16,8 @@ RUN curl -L https://github.com/keycloak/keycloak/releases/download/${KEYCLOAK_VE
     chown -R kek:kek /opt/keycloak
 
 USER kek
-WORKDIR /opt/keycloak
+WORKDIR /opt/keycloak
 
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start"]
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
 
-EXPOSE 8080 8443
+EXPOSE 8080 8443
