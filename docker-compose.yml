@@ -1,29 +1,36 @@
-version: '3'
+version: '3.9'
 
 services:
   postgres:
     image: postgres:15.3
     ports:
       - "5432:5432"
+    container_name: keycloak_postgres
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Lolkek123
-      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_DB: kcdb
+    volumes:
+      - pgdata_kc:/var/lib/postgresql/data
 
-  keycloak3:
-    image: testkk01:latest
+  keycloak:
+    image: ihavelapki-kc:latest
+    ports:
+      - "8080:8080"
+    container_name: keycloak_keycloak
     environment:
       KC_DB: postgres
       KC_DB_USERNAME: postgres
-      KC_DB_PASSWORD: Lolkek123
-      KC_HOSTNAME: keycloak3
-      KC_DB_URL: jdbc:postgresql://postgres:5432/postgres
-      KEYCLOAK_ADMIN: rtlkcadm
-      KEYCLOAK_ADMIN_PASSWORD: Lolkek123
-      KEYCLOAK_LOGLEVEL: DEBUG
+      KC_DB_URL: jdbc:postgresql://postgres:5432/kcdb
+      KC_DB_PASSWORD: {PASSWORD}
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: {PASSWORD}
+      KC_LOG_LEVEL: ERROR
       KC_HTTP_ENABLED: true
     command: start-dev
-    ports:
-      - "8484:8080"
     depends_on:
       - postgres
+
+volumes:
+  pgdata_kc:
+    external: true
