@@ -1,0 +1,34 @@
+name: GitHub Actions KeyCloak
+run-name: ${{ github.actor }} is testing out GitHub Actions
+on: [push]
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: Docker build
+        run: docker build -t ihavelapki/kek-kc:alp3.16.kc24.0.5 --build-arg ALPINE_VERSION="3.16" --build-arg KC_VERSION="24.0.5" .
+      - name: docker run
+        run: docker run -d -p 8080:8080 --name kek-kc ihavelapki/kek-kc:alp3.16.kc24.0.5 start-dev
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      # Push Docker image to Docker Hub
+      - name: Push Docker Image to Docker Hub
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ihavelapki/kek-kc:alp3.16.kc24.0.5
