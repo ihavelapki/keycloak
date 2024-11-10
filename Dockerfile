@@ -1,11 +1,15 @@
 ARG ALPINE_VERSION
+
 FROM alpine:${ALPINE_VERSION}
-ARG KC_VERSION
+
+
 MAINTAINER ihavelapki
 
 ENV TZ=Europe/Moscow
+ARG KC_VERSION
 ENV KC_VERSION=${KC_VERSION}
 RUN printenv
+
 RUN apk update && apk upgrade && apk add --no-cache curl openjdk17 bash && adduser -D kek
  
 RUN curl -L https://github.com/keycloak/keycloak/releases/download/${KC_VERSION}/keycloak-${KC_VERSION}.tar.gz -o /tmp/keycloak.tar.gz && \
