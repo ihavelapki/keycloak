@@ -1,5 +1,5 @@
 ARG ALPINE_VERSION
-ARG KEYCLOAK_VERSION
+ARG KC_VERSION
 FROM alpine:${ALPINE_VERSION}
 
 MAINTAINER ihavelapki
@@ -8,7 +8,7 @@ ENV TZ=Europe/Moscow
 
 RUN apk update && apk upgrade && apk add --no-cache curl openjdk17 bash && adduser -D kek
 
-ENV KEYCLOAK_VERSION ${KEYCLOAK_VERSION}
+ENV KEYCLOAK_VERSION ${KC_VERSION}
 RUN echo "${ALPINE_VERSION} ${KEYCLOAK_VERSION}" && curl -L https://github.com/keycloak/keycloak/releases/download/${KEYCLOAK_VERSION}/keycloak-${KEYCLOAK_VERSION}.tar.gz -o /tmp/keycloak.tar.gz && \
     tar -xzf /tmp/keycloak.tar.gz -C /opt && \
     rm /tmp/keycloak.tar.gz && \
