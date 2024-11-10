@@ -9,7 +9,8 @@ ENV TZ=Europe/Moscow
 RUN apk update && apk upgrade && apk add --no-cache curl openjdk17 bash && adduser -D kek
 
 ENV KEYCLOAK_VERSION=${KC_VERSION}
-RUN echo "${ALPINE_VERSION} ${KEYCLOAK_VERSION}" && curl -L https://github.com/keycloak/keycloak/releases/download/${KEYCLOAK_VERSION}/keycloak-${KEYCLOAK_VERSION}.tar.gz -o /tmp/keycloak.tar.gz && \
+RUN echo "${ALPINE_VERSION} ${KEYCLOAK_VERSION}" 
+RUN curl -L https://github.com/keycloak/keycloak/releases/download/${KEYCLOAK_VERSION}/keycloak-${KEYCLOAK_VERSION}.tar.gz -o /tmp/keycloak.tar.gz && \
     tar -xzf /tmp/keycloak.tar.gz -C /opt && \
     rm /tmp/keycloak.tar.gz && \
     mv /opt/keycloak-${KEYCLOAK_VERSION} /opt/keycloak && \
