@@ -17,7 +17,7 @@ jobs:
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Docker build
-        run: docker build -t ihavelapki/kek-kc:alp3.16.kc24.0.5 --build-arg ALPINE_VERSION=3.16 --build-arg KC_VERSION=24.0.5 .
+        run: docker build --build-arg ALPINE_VERSION=3.16 --build-arg KC_VERSION=24.0.5 -t ihavelapki/kek-kc:alp3.16.kc24.0.5 .
       - name: docker run
         run: docker run -d -p 8080:8080 --name kek-kc ihavelapki/kek-kc:alp3.16.kc24.0.5 start-dev
       - name: Log in to Docker Hub
