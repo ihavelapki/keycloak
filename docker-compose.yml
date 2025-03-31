@@ -1,36 +1,50 @@
-version: '3.9'
-
 services:
-  postgres:
-    image: postgres:15.3
-    ports:
-      - "5432:5432"
-    container_name: keycloak_postgres
+  keycloak_db:
+    image: postgres:17
+    expose:
+      - 5432
+    container_name: keycloak-db
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${PASSWORD}
       POSTGRES_DB: kcdb
+      POSTGRES_USER: kcdbadm
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD}
     volumes:
-      - pgdata_kc:/var/lib/postgresql/data
+      - keycloak-db-volume:/var/lib/postgresql/data
+    networks:
+      - docker-bridge-network
 
   keycloak:
-    image: ihavelapki-kc:latest
+    image: ihavelapki/kc:latest
     ports:
       - "8080:8080"
-    container_name: keycloak_keycloak
+    container_name: keycloak
+    restart: unless-stopped
     environment:
-      KC_DB: postgres
-      KC_DB_USERNAME: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/kcdb
-      KC_DB_PASSWORD: {PASSWORD}
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: {PASSWORD}
-      KC_LOG_LEVEL: ERROR
-      KC_HTTP_ENABLED: true
-    command: start-dev
+      KC_DB: kcdb
+      KC_DB_USERNAME: kcdbadm
+      KC_DB_URL: "jdbc:postgresql://keycloak_db:5432/kcdb"
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      KEYCLOAK_ADMIN: ${MASTER_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${MASTER_PASSWORD}
+      KC_LOG_LEVEL: "ERROR"
+      KC_HTTP_RELATIVE_PATH: "/auth"
+      KC_HTTPS_CERTIFICATE_FILE: "/opt/rtl/ssl/tls.crt"
+      KC_HTTPS_CERTIFICATE_KEY_FILE: "/opt/rtl/ssl/tls.key"
+      KC_PROXY_HEADERS: "xforwarded"
+      KC_PROXY_PROTOCOL_ENABLED: true
+      KC_HOSTNAME_STRICT: false
+      KC_HEALTH_ENABLED: true
+    command: start -v
     depends_on:
-      - postgres
+      - keycloak_db
+    networks:
+      - docker-bridge-network
 
 volumes:
-  pgdata_kc:
+  keycloak-db-volume:
+    external: true
+
+networks:
+  docker-bridge-network:
     external: true
