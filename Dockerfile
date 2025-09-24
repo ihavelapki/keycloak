@@ -1,22 +1,17 @@
-ARG ALPINE_VERSION
-
-FROM alpine:${ALPINE_VERSION}
-
-ARG KC_VERSION
+FROM alpine:3.20
 
 MAINTAINER ihavelapki
 
 ENV TZ=Europe/Moscow
 
-ENV KC_V=$KC_VERSION
-RUN printenv
+ENV KC_VERSION=23.0.5
 
-RUN apk update && apk upgrade && apk add --no-cache curl openjdk17 bash && adduser -D kek
+RUN printenv && apk update && apk upgrade && apk add --no-cache curl openjdk17 bash && adduser -D kek
  
-RUN curl -L https://github.com/keycloak/keycloak/releases/download/$KC_VERSION/keycloak-${KC_V}.tar.gz -o /tmp/keycloak.tar.gz && \
+RUN curl -L https://github.com/keycloak/keycloak/releases/download/$KC_VERSION/keycloak-${KC_VERSION}.tar.gz -o /tmp/keycloak.tar.gz && \
     tar -xzf /tmp/keycloak.tar.gz -C /opt && \
     rm /tmp/keycloak.tar.gz && \
-    mv /opt/keycloak-${KC_V} /opt/keycloak && \
+    mv /opt/keycloak-${KC_VERSION} /opt/keycloak && \
     chown -R kek:kek /opt/keycloak
 
 USER kek
