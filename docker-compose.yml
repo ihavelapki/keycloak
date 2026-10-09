@@ -1,6 +1,6 @@
 services:
   keycloak_db:
-    image: postgres:18
+    image: postgres:17
     expose:
       - 5432
     container_name: kek-keycloak-db
@@ -21,29 +21,25 @@ services:
     container_name: kek-keycloak
     restart: unless-stopped
     environment:
+      KC_DB_URL: jdbc:postgresql://keycloak_db:5432/kcdb
       KC_DB_USERNAME: kcdbadm
-      KC_DB_URL: "jdbc:postgresql://keycloak_db:5432/kcdb"
-      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
-      KEYCLOAK_ADMIN: ${KC_MASTER_USER}
-      KEYCLOAK_ADMIN_PASSWORD: ${KC_MASTER_PASSWORD}
-      KC_LOG_LEVEL: "INFO"
-      KC_HTTP_RELATIVE_PATH: "/auth"
-      KC_HTTPS_CERTIFICATE_FILE: "/opt/rtl/ssl/tls.crt"
-      KC_HTTPS_CERTIFICATE_KEY_FILE: "/opt/rtl/ssl/tls.key"
-      KC_PROXY_HEADERS: "xforwarded"
-      KC_PROXY_PROTOCOL_ENABLED: true
-      KC_HOSTNAME_STRICT: false
-      KC_HEALTH_ENABLED: true
-    command: start -v
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:?required}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_MASTER_USER:?required}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_MASTER_PASSWORD:?required}
+      KC_LOG_LEVEL: INFO
+      KC_HOSTNAME: https://keycloak.example.com/auth
+      KC_HOSTNAME_STRICT: "true"
+      KC_HTTPS_CERTIFICATE_FILE: /opt/rtl/ssl/tls.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/rtl/ssl/tls.key
+      KC_PROXY_HEADERS: xforwarded
+    command: start -v --optimized
     depends_on:
       - keycloak_db
     networks:
       - kek-docker-bridge-network
-
 volumes:
   kek-keycloak-db-volume:
     external: true
-
 networks:
   kek-docker-bridge-network:
     external: true
